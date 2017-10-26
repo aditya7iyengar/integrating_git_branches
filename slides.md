@@ -8,7 +8,7 @@ patat:
         imageTarget: [onDullWhite, vividRed]
 ...
 
-# WE LOVE GIT!
+# I GIT IT!
 ```
                          :':''''
                         '''''''''
@@ -77,8 +77,10 @@ patat:
 
 - Basics of Merging and Rebasing
 - Differences between them
+- Problems with Merging & Rebasing
 - Things to keep in mind while rebasing
-- When to use `git merge` vs `git rebase`
+- When to use `git merge` vs `git rebase` (basics)
+- When to use `git merge` vs `git rebase` (using Adi's rules for rebasing)
 - Advanced rebasing
 
 
@@ -227,6 +229,8 @@ be misleading
 
 # THINGS TO KEEP IN MIND WHILE REBASING
 
+- Golden Rule: Rebase only unpublished (or local) commits.
+__I don't completely agree with it.__ (We will get back to this)
 
 - Commits that are eligible for rebasing can be displayed by:
 `$ git log origin/master..master`
@@ -236,7 +240,7 @@ commits, the git-state it represents is completely new. So there's no guarantee
 that it will behave the same as the original commits.
 
 
-# WHEN TO USE `git rebase` vs `git merge`
+# WHEN TO USE `git rebase` vs `git merge` (The easy stuff)
 
 _Rebases are how changes should pass from the top of hierarchy downwards and merges are how they flow back upwards_
 
@@ -246,6 +250,35 @@ _Rebases are how changes should pass from the top of hierarchy downwards and mer
 
 - When finishing a feature branch merge the changes back to `base`,
 through fast-forward merge.
+
+
+# WHEN TO USE `git rebase` vs `git merge` (The not so easy stuff)
+
+- Adi's First Rule for rebasing:
+__Rebase commits only when the commits are leaves.__
+Rebasing parent commits to new commits, means those commit hashes don't exist.
+Thankfully git works in a way that preserves parent information, but it rebasing
+non-leaf commits really have a bad effect of the git history (whether they are
+local or published)
+
+- Adi's Second Rule for rebasing:
+__Don't Rebase commits to current state of an integration if the integration has
+two conflicting big features.__
+Merge Conflicts Resolution do not quite work the same as Resolutions are recorded
+explicitly for `git pull` and `git merge` vs `git pull --rebase` and `git rebase`.
+So, if you find yourself rebasing again and again into an integration branch, it
+might be worthwhile to use merge for heavily conflicted work.
+
+- Adi's Third Rule for rebasing:
+__NEVER rebase two features that have different parents__
+This is quite obvious.. You shouldn't be integrating features anyway.
+
+- Adi's Fourth Rule for rebasing:
+__Don't rebase two features with same parents _directly___
+This one isn't that obvious, but if two features, published or not, depend on a
+parent's state, rebasing either of them to a new commit seems no different than
+merging, besides when you run into a problem where one feature introduces a bug
+into another, and you're trying to revert commits that might have cause the bug.
 
 
 # INTERACTIVE REBASING
