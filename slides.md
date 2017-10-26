@@ -229,8 +229,36 @@ be misleading
 
 # THINGS TO KEEP IN MIND WHILE REBASING
 
-- Golden Rule: Rebase only unpublished (or local) commits.
+- Golden Rule: Unpublished (or local) commits are rebasable.
 __I don't completely agree with it.__ (We will get back to this)
+```
+master -> (m1)--(m2)--(m3)--(m4)--(m5)
+                   \
+feature ->         (f1)--(f2)
+```
+
+    - Checkout master and rebase feature
+        `$ git checkout feature`
+        `$ git rebase master`
+
+
+    - Git history after rebasing
+
+    ```
+    master -> (m1)--(m2)       (m6)--(m7)--(m8)
+                       \       /
+    feature ->         (f1)--(f2)
+    ```
+
+    - Difference in master forks:
+
+    ```
+    Everybody else's master             Our master
+
+    (m1)--(m2)--(m3)--(m4)--(m5)    (m1)--(m2)--(f1)--(f2)--(m6)--(m7)--(m8)
+
+    ```
+
 
 - Commits that are eligible for rebasing can be displayed by:
 `$ git log origin/master..master`
@@ -238,6 +266,10 @@ __I don't completely agree with it.__ (We will get back to this)
 - Even though rebased commits may introduce same textual difference as original
 commits, the git-state it represents is completely new. So there's no guarantee
 that it will behave the same as the original commits.
+
+- If you try to push a rebased `published` branch, git will prevent you from doing so.
+`git push --force`
+__Use this only for backup purposes for rare cleanups__
 
 
 # WHEN TO USE `git rebase` vs `git merge` (The easy stuff)
@@ -247,9 +279,11 @@ _Rebases are how changes should pass from the top of hierarchy downwards and mer
 - When pulling changes from `origin/base` onto your local `base` use rebase.
 `$ git checkout master`
 `$ git pull --rebase`
+or
+`git rebase origin/master master`
 
 - When finishing a feature branch merge the changes back to `base`,
-through fast-forward merge.
+through `git merge`.
 
 
 # WHEN TO USE `git rebase` vs `git merge` (The not so easy stuff)
@@ -293,3 +327,22 @@ feature branch
 - This offers the user, complete control over branch's commit history. This
 can be used to clean up messy history.
 
+# SUMMARY
+
+- Keep Adi's rules in mind and you __should__ be fine (maybe). ;)
+
+- If you're not entirely confident how the git history will look like after
+a rebase, you can always mimic it in a temporary branch. In that way, if you
+accidentaly mess up something, you can checkout the original branch:
+```
+git checkout feature
+git checkout -b temporary-branch
+git rebase -i master
+# [Clean up the history]
+git checkout master
+git merge temporary-branch
+```
+
+- Whenever you're too scared to `rebase` for whatever reason, don't rebase! :D
+
+# QUESTIONS?
