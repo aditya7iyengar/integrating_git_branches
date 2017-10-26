@@ -82,6 +82,8 @@ patat:
 - When to use `git merge` vs `git rebase` (basics)
 - When to use `git merge` vs `git rebase` (using Adi's rules for rebasing)
 - Advanced rebasing
+- Summary
+- Q/A
 
 
 # WHAT ARE THESE COMMANDS ABOUT?
